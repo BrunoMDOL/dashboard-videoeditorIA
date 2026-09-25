@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { AbasPeriodo } from "@/components/abas-periodo";
 import { CartaoReel } from "@/components/cartao-reel";
-import { criterioDeDesempenho, listarReels, type Filtro, type Ordem } from "@/lib/dados";
+import { dados, type Filtro, type Ordem } from "@/lib/dados";
 import { frasePeriodo, periodoValido, type PeriodoId } from "@/lib/periodos";
 
 const POR_PAGINA = 48;
@@ -35,8 +35,11 @@ export default async function Biblioteca({ searchParams }: PageProps<"/bibliotec
     busca,
     ordem,
   };
-  const reels = listarReels(filtro);
-  const visiveis = reels.slice(0, limite);
+  const fonte = dados();
+  const [{ itens: visiveis, total }, criterio] = await Promise.all([
+    fonte.listarReels({ ...filtro, limite }),
+    fonte.criterioDeDesempenho(),
+  ]);
 
   function href(mudar: Record<string, string | undefined>) {
     const base: Record<string, string | undefined> = {
@@ -126,11 +129,7 @@ export default async function Biblioteca({ searchParams }: PageProps<"/bibliotec
                     : "text-texto-2 hover:text-texto border-transparent"
                 }`}
               >
-                {o === "recentes"
-                  ? "Mais recentes"
-                  : criterioDeDesempenho() === "score"
-                    ? "Desempenho"
-                    : "Curtidas"}
+                {o === "recentes" ? "Mais recentes" : criterio === "score" ? "Desempenho" : "Curtidas"}
               </Link>
             ))}
           </div>
@@ -141,7 +140,7 @@ export default async function Biblioteca({ searchParams }: PageProps<"/bibliotec
         <>
           <h2 className="sr-only">Reels</h2>
           <p className="text-texto-2 -mt-2 text-[14px]">
-            {reels.length} {reels.length === 1 ? "Reel" : "Reels"}
+            {total} {total === 1 ? "Reel" : "Reels"}
             {visao === "proprios" && periodo !== "sempre" ? ` ${frasePeriodo(periodo)}` : ""}
             {busca ? ` com “${busca}”` : ""}
           </p>
@@ -150,13 +149,13 @@ export default async function Biblioteca({ searchParams }: PageProps<"/bibliotec
               <CartaoReel key={r.id} reel={r} posicao={ordem === "desempenho" ? i + 1 : undefined} />
             ))}
           </div>
-          {reels.length > visiveis.length && (
+          {total > visiveis.length && (
             <Link
               href={href({ limite: String(limite + POR_PAGINA) })}
               scroll={false}
               className="border-linha-forte hover:bg-elevado mx-auto inline-flex h-10 items-center rounded-lg border px-5 text-[15px] font-medium"
             >
-              Mostrar mais {Math.min(POR_PAGINA, reels.length - visiveis.length)}
+              Mostrar mais {Math.min(POR_PAGINA, total - visiveis.length)}
             </Link>
           )}
         </>

@@ -6,16 +6,16 @@ import { CapaDoReel } from "@/components/capa-do-reel";
 import { FaixaDeCortes, GANCHO_S } from "@/components/faixa-de-cortes";
 import { SeloStatus } from "@/components/selo-status";
 import { SECOES, rotulosDasEtiquetas, textoParaCopiar } from "@/lib/analise";
-import { buscarReel } from "@/lib/dados";
+import { dados } from "@/lib/dados";
 import { duracao, formatarDataHora, formatarNumero, minutagem, tituloDoReel } from "@/lib/formato";
 
 export async function generateMetadata({ params }: PageProps<"/videos/[id]">) {
-  const reel = buscarReel((await params).id);
+  const reel = await dados().buscarReel((await params).id);
   return { title: reel ? `${tituloDoReel(reel.legenda)} | Besser Home` : "Reel não encontrado" };
 }
 
 export default async function PaginaDoVideo({ params }: PageProps<"/videos/[id]">) {
-  const reel = buscarReel((await params).id);
+  const reel = await dados().buscarReel((await params).id);
   if (!reel) notFound();
 
   const analise = reel.analise;

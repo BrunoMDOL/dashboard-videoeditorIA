@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Clapperboard, LayoutGrid, Upload } from "lucide-react";
+import { Clapperboard, LayoutGrid, LogOut, Upload } from "lucide-react";
+import { sair } from "@/app/entrar/acoes";
 
 const ITENS = [
   { href: "/", rotulo: "Visão geral", Icone: LayoutGrid },
@@ -63,9 +64,18 @@ export function MenuLateral({ fonteDosDados }: { fonteDosDados: string }) {
         </ul>
       </nav>
 
-      <p className="text-texto-3 mt-auto hidden px-6 pb-6 text-[13px] leading-snug lg:block">
-        {fonteDosDados}
-      </p>
+      <div className="mt-auto hidden flex-col gap-4 px-6 pb-6 lg:flex">
+        <p className="text-texto-3 text-[13px] leading-snug">{fonteDosDados}</p>
+        <form action={sair}>
+          <button
+            type="submit"
+            className="text-texto-2 hover:text-texto inline-flex items-center gap-2 text-[14px] transition-colors"
+          >
+            <LogOut size={16} aria-hidden />
+            Sair
+          </button>
+        </form>
+      </div>
     </aside>
   );
 }

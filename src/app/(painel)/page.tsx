@@ -6,7 +6,7 @@ import { CartaoReel } from "@/components/cartao-reel";
 import { FaixaDeCortes } from "@/components/faixa-de-cortes";
 import { SeloStatus } from "@/components/selo-status";
 import { textoParaCopiar } from "@/lib/analise";
-import { contagens, criterioDeDesempenho, destaque, listarReels } from "@/lib/dados";
+import { dados } from "@/lib/dados";
 import { duracao, formatarDataHora, formatarNumero, tituloDoReel } from "@/lib/formato";
 import { frasePeriodo, periodoValido, type PeriodoId } from "@/lib/periodos";
 
@@ -14,11 +14,15 @@ export default async function VisaoGeral({ searchParams }: PageProps<"/">) {
   const { periodo: bruto } = await searchParams;
   const periodo: PeriodoId = periodoValido(typeof bruto === "string" ? bruto : undefined) ?? "7d";
 
-  const principal = destaque(periodo);
-  const ranking = listarReels({ origem: "proprio", periodo, ordem: "desempenho" }).slice(0, 8);
-  const recentes = listarReels({ origem: "proprio" }).slice(0, 6);
-  const numeros = contagens(periodo);
-  const criterio = criterioDeDesempenho();
+  const fonte = dados();
+  const [ranking, recentes, numeros, criterio] = await Promise.all([
+    fonte.listarReels({ origem: "proprio", periodo, ordem: "desempenho", limite: 8 }).then((r) => r.itens),
+    fonte.listarReels({ origem: "proprio", limite: 6 }).then((r) => r.itens),
+    fonte.contagens(periodo),
+    fonte.criterioDeDesempenho(),
+  ]);
+  // O destaque é o primeiro do ranking do período.
+  const principal = ranking[0] ?? null;
   const noPeriodo = frasePeriodo(periodo);
 
   return (
