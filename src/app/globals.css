@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+/*
+ * Tokens da marca Besser Home, tirados do site da calculadora.
+ * Tema escuro por decisão do marketing; sem gradientes; bordas no lugar de sombras.
+ */
+:root {
+  --fundo: #0d0f13;
+  --cartao: #16171a;
+  --elevado: #1b1d25;
+  --linha: #262830;
+  --linha-forte: #34363f;
+  --texto: #f4f2ee;
+  --texto-2: #a19e97;
+  --texto-3: #8a877f;
+  /* Vermelho Besser: marcas, indicador de menu, gancho na linha do tempo. */
+  --vermelho: #e03c31;
+  /* Um tom abaixo, para o botão principal com texto branco passar no contraste AA (5,2:1). */
+  --vermelho-botao: #c8352b;
+  /* Um tom acima, para texto vermelho sobre o fundo escuro (6:1). */
+  --vermelho-texto: #f26b61;
+  --vermelho-fundo: #7a1216;
+  --faixa: #3a3d47;
+}
+
+@theme inline {
+  --color-fundo: var(--fundo);
+  --color-cartao: var(--cartao);
+  --color-elevado: var(--elevado);
+  --color-linha: var(--linha);
+  --color-linha-forte: var(--linha-forte);
+  --color-texto: var(--texto);
+  --color-texto-2: var(--texto-2);
+  --color-texto-3: var(--texto-3);
+  --color-vermelho: var(--vermelho);
+  --color-vermelho-botao: var(--vermelho-botao);
+  --color-vermelho-texto: var(--vermelho-texto);
+  --color-vermelho-fundo: var(--vermelho-fundo);
+  --color-faixa: var(--faixa);
+  --font-sans: var(--font-outfit);
+  --font-mono: var(--font-plex-mono);
+}
+
+html {
+  color-scheme: dark;
+  background: var(--fundo);
+}
+
+body {
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--vermelho-texto);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--vermelho-fundo);
+  color: var(--texto);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
