@@ -1,13 +1,18 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useRef, useState, type FormEvent } from "react";
 import { FileVideo, Upload } from "lucide-react";
 
 // Limite prático: um Reel de 90 s em 1080p fica bem abaixo disso.
 const LIMITE_MB = 200;
 
+const campo =
+  "border-linha bg-cartao placeholder:text-texto-3 hover:border-linha-forte rounded-lg border px-3 text-[15px] transition-colors";
+
 export function FormularioReferencia({ envioAtivo }: { envioAtivo: boolean }) {
   const idArquivo = useId();
+  const idErro = useId();
+  const entrada = useRef<HTMLInputElement>(null);
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [erro, setErro] = useState("");
   const [arrastando, setArrastando] = useState(false);
@@ -20,18 +25,39 @@ export function FormularioReferencia({ envioAtivo }: { envioAtivo: boolean }) {
       return;
     }
     if (f.size > LIMITE_MB * 1024 * 1024) {
-      setErro(`O arquivo tem ${Math.round(f.size / 1024 / 1024)} MB. O limite é ${LIMITE_MB} MB.`);
+      setErro(`O arquivo tem ${Math.round(f.size / 1024 / 1024)} MB. Escolha um de até ${LIMITE_MB} MB.`);
       return;
     }
     setArquivo(f);
   }
 
+  function enviar(e: FormEvent) {
+    e.preventDefault();
+    if (!arquivo) {
+      setErro("Escolha o .mp4 do Reel antes de enviar.");
+      entrada.current?.focus();
+    }
+  }
+
   return (
-    <form className="flex max-w-2xl flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
+    <form className="flex max-w-2xl flex-col gap-6" onSubmit={enviar} noValidate>
       <div className="flex flex-col gap-2">
-        <label htmlFor={idArquivo} className="text-[15px] font-medium">
+        <span className="text-[15px] font-medium" id={`${idArquivo}-rotulo`}>
           Vídeo do Reel
-        </label>
+        </span>
+        {/* O input vem antes do rótulo para o rótulo mostrar o foco do teclado (peer). */}
+        <input
+          ref={entrada}
+          id={idArquivo}
+          name="video"
+          type="file"
+          accept="video/mp4,.mp4"
+          aria-labelledby={`${idArquivo}-rotulo`}
+          aria-describedby={erro ? idErro : undefined}
+          aria-invalid={erro ? true : undefined}
+          className="peer sr-only"
+          onChange={(e) => escolher(e.target.files?.[0])}
+        />
         <label
           htmlFor={idArquivo}
           onDragOver={(e) => {
@@ -44,38 +70,29 @@ export function FormularioReferencia({ envioAtivo }: { envioAtivo: boolean }) {
             setArrastando(false);
             escolher(e.dataTransfer.files[0]);
           }}
-          className={`flex cursor-pointer flex-col items-center gap-3 rounded-2xl border border-dashed px-6 py-10 text-center transition-colors ${
+          className={`peer-focus-visible:outline-vermelho-texto flex cursor-pointer flex-col items-center gap-3 rounded-2xl border border-dashed px-6 py-10 text-center transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 ${
             arrastando ? "border-vermelho bg-elevado" : "border-linha-forte bg-cartao hover:bg-elevado"
           }`}
         >
           {arquivo ? (
             <>
               <FileVideo size={26} className="text-texto-2" aria-hidden />
-              <span className="text-[15px] font-medium">{arquivo.name}</span>
+              <span className="text-[15px] font-medium break-all">{arquivo.name}</span>
               <span className="text-texto-2 text-[13px]">
-                {(arquivo.size / 1024 / 1024).toFixed(1)} MB. Clique para trocar.
+                {(arquivo.size / 1024 / 1024).toFixed(1)}&nbsp;MB. Clique para trocar.
               </span>
             </>
           ) : (
             <>
               <Upload size={26} className="text-texto-2" aria-hidden />
               <span className="text-[15px] font-medium">Arraste o .mp4 aqui ou clique para escolher</span>
-              <span className="text-texto-2 text-[13px]">Até {LIMITE_MB} MB</span>
+              <span className="text-texto-2 text-[13px]">Até {LIMITE_MB}&nbsp;MB</span>
             </>
           )}
         </label>
-        <input
-          id={idArquivo}
-          type="file"
-          accept="video/mp4,.mp4"
-          className="sr-only"
-          onChange={(e) => escolher(e.target.files?.[0])}
-        />
-        {erro && (
-          <p role="alert" className="text-vermelho-texto text-[14px]">
-            {erro}
-          </p>
-        )}
+        <p id={idErro} role="alert" className="text-vermelho-texto min-h-5 text-[14px]">
+          {erro}
+        </p>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -87,8 +104,10 @@ export function FormularioReferencia({ envioAtivo }: { envioAtivo: boolean }) {
           name="link"
           type="url"
           inputMode="url"
+          autoComplete="off"
+          spellCheck={false}
           placeholder="https://www.instagram.com/reel/…"
-          className="border-linha bg-cartao placeholder:text-texto-3 focus:border-linha-forte h-11 rounded-lg border px-3 text-[15px] outline-none"
+          className={`${campo} h-11`}
         />
         <p className="text-texto-3 text-[13px]">Com o link, a capa do card abre o post original.</p>
       </div>
@@ -101,8 +120,9 @@ export function FormularioReferencia({ envioAtivo }: { envioAtivo: boolean }) {
           id="nota"
           name="nota"
           rows={3}
-          placeholder="Ex.: a legenda que aparece palavra por palavra no ritmo da música"
-          className="border-linha bg-cartao placeholder:text-texto-3 focus:border-linha-forte rounded-lg border px-3 py-2.5 text-[15px] leading-relaxed outline-none"
+          autoComplete="off"
+          placeholder="Ex.: a legenda que aparece palavra por palavra no ritmo da música…"
+          className={`${campo} py-2.5 leading-relaxed`}
         />
         <p className="text-texto-3 text-[13px]">A IA dá atenção especial a esse ponto na análise.</p>
       </div>
@@ -110,7 +130,7 @@ export function FormularioReferencia({ envioAtivo }: { envioAtivo: boolean }) {
       <div className="flex flex-col gap-2">
         <button
           type="submit"
-          disabled={!envioAtivo || !arquivo}
+          disabled={!envioAtivo}
           className="bg-vermelho-botao hover:bg-vermelho disabled:bg-elevado disabled:text-texto-3 h-11 w-fit rounded-lg px-5 text-[15px] font-semibold text-white transition-colors disabled:cursor-not-allowed"
         >
           Enviar e analisar

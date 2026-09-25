@@ -8,27 +8,23 @@ export function CapaDoReel({
   reel,
   tamanho = "(min-width: 1024px) 220px, 45vw",
   prioridade = false,
+  mini = false,
   className = "",
 }: {
   reel: Reel;
   tamanho?: string;
   prioridade?: boolean;
+  /** Miniatura de lista: sem texto no lugar da capa ausente. */
+  mini?: boolean;
   className?: string;
 }) {
   const titulo = tituloDoReel(reel.legenda);
   const imagem = reel.capaUrl ? (
-    <Image
-      src={reel.capaUrl}
-      alt=""
-      fill
-      sizes={tamanho}
-      priority={prioridade}
-      className="object-cover"
-    />
+    <Image src={reel.capaUrl} alt="" fill sizes={tamanho} priority={prioridade} className="object-cover" />
   ) : (
     <span className="text-texto-3 flex h-full flex-col items-center justify-center gap-2 px-4 text-center text-[13px]">
-      <VideoOff size={20} aria-hidden />
-      Sem vídeo na API
+      <VideoOff size={mini ? 14 : 20} aria-hidden />
+      {mini ? <span className="sr-only">Sem vídeo na API</span> : "Sem vídeo na API"}
     </span>
   );
 
@@ -45,10 +41,12 @@ export function CapaDoReel({
       className={`group ${base}`}
     >
       {imagem}
-      <span className="bg-fundo/90 text-texto absolute right-2 bottom-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-        Instagram
-        <ArrowUpRight size={13} aria-hidden />
-      </span>
+      {!mini && (
+        <span className="bg-fundo/90 text-texto absolute right-2 bottom-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+          Instagram
+          <ArrowUpRight size={13} aria-hidden />
+        </span>
+      )}
     </a>
   );
 }

@@ -61,35 +61,42 @@ export default async function VisaoGeral({ searchParams }: PageProps<"/">) {
             {criterio === "score" ? "Melhor desempenho" : "Mais curtido"} {noPeriodo}
           </h2>
           {principal ? (
-            <article className="bg-cartao border-linha flex flex-col gap-6 rounded-2xl border p-4 sm:flex-row sm:p-5">
+            <article className="bg-cartao border-linha grid grid-cols-[7.5rem_minmax(0,1fr)] gap-x-4 gap-y-5 rounded-2xl border p-4 sm:grid-cols-[220px_minmax(0,1fr)] sm:gap-x-6 sm:p-5">
               <CapaDoReel
                 reel={principal}
                 prioridade
-                tamanho="(min-width: 640px) 220px, 90vw"
-                className="w-full shrink-0 sm:w-[220px]"
+                tamanho="(min-width: 640px) 220px, 120px"
+                className="w-full sm:row-span-2"
               />
-              <div className="flex min-w-0 flex-1 flex-col gap-4">
-                <div>
-                  <h3 className="text-[22px] leading-snug font-semibold">
-                    <Link href={`/videos/${principal.id}`} className="hover:text-vermelho-texto transition-colors">
-                      {tituloDoReel(principal.legenda)}
-                    </Link>
-                  </h3>
-                  <p className="text-texto-2 mt-1.5 flex flex-wrap gap-x-3 text-[14px]">
-                    <span>{formatarDataHora(principal.publicadoEm)}</span>
-                    <span>{duracao(principal.duracaoS)}</span>
-                  </p>
-                </div>
+              <div className="self-center sm:self-start">
+                <h3 className="text-[18px] leading-snug font-semibold sm:text-[22px]">
+                  <Link
+                    href={`/videos/${principal.id}`}
+                    className="hover:text-vermelho-texto transition-colors"
+                  >
+                    {tituloDoReel(principal.legenda)}
+                  </Link>
+                </h3>
+                <p className="text-texto-2 mt-1.5 flex flex-wrap gap-x-3 text-[14px]">
+                  <span>{formatarDataHora(principal.publicadoEm)}</span>
+                  {duracao(principal.duracaoS) && <span>{duracao(principal.duracaoS)}</span>}
+                </p>
+              </div>
 
+              <div className="col-span-2 flex min-w-0 flex-col gap-4 sm:col-span-1 sm:col-start-2">
                 {principal.metricas && (
                   <dl className="flex gap-8">
                     <div>
                       <dt className="text-texto-2 text-[13px]">Curtidas</dt>
-                      <dd className="text-[24px] font-semibold">{formatarNumero(principal.metricas.curtidas)}</dd>
+                      <dd className="text-[24px] font-semibold">
+                        {formatarNumero(principal.metricas.curtidas)}
+                      </dd>
                     </div>
                     <div>
                       <dt className="text-texto-2 text-[13px]">Comentários</dt>
-                      <dd className="text-[24px] font-semibold">{formatarNumero(principal.metricas.comentarios)}</dd>
+                      <dd className="text-[24px] font-semibold">
+                        {formatarNumero(principal.metricas.comentarios)}
+                      </dd>
                     </div>
                   </dl>
                 )}
@@ -145,7 +152,7 @@ export default async function VisaoGeral({ searchParams }: PageProps<"/">) {
                     <span className="text-texto-3 w-5 text-right text-[14px] font-semibold tabular-nums">
                       {i + 1}
                     </span>
-                    <CapaDoReel reel={r} tamanho="48px" className="w-10 shrink-0 rounded-md" />
+                    <CapaDoReel reel={r} mini tamanho="48px" className="w-10 shrink-0 rounded-md" />
                     <div className="min-w-0 flex-1">
                       <Link
                         href={`/videos/${r.id}`}
@@ -154,8 +161,8 @@ export default async function VisaoGeral({ searchParams }: PageProps<"/">) {
                         {tituloDoReel(r.legenda)}
                       </Link>
                       <p className="text-texto-2 mt-0.5 flex gap-3 text-[13px]">
-                        <span>{formatarNumero(r.metricas?.curtidas ?? 0)} curtidas</span>
-                        <span>{duracao(r.duracaoS)}</span>
+                        <span>{formatarNumero(r.metricas?.curtidas ?? 0)}&nbsp;curtidas</span>
+                        {duracao(r.duracaoS) && <span>{duracao(r.duracaoS)}</span>}
                       </p>
                     </div>
                     {r.analise && (

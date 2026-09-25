@@ -54,7 +54,11 @@ export default async function Biblioteca({ searchParams }: PageProps<"/bibliotec
   }
 
   const hrefVisao = (v: Visao) =>
-    v === "proprios" ? "/biblioteca" : v === "referencias" ? "/biblioteca?origem=referencia" : "/biblioteca?atencao=1";
+    v === "proprios"
+      ? "/biblioteca"
+      : v === "referencias"
+        ? "/biblioteca?origem=referencia"
+        : "/biblioteca?atencao=1";
 
   return (
     <div className="flex flex-col gap-7">
@@ -74,9 +78,10 @@ export default async function Biblioteca({ searchParams }: PageProps<"/bibliotec
               type="search"
               name="q"
               defaultValue={busca}
-              placeholder="Buscar na legenda"
+              placeholder="Buscar na legenda…"
+              autoComplete="off"
               aria-label="Buscar na legenda"
-              className="border-linha bg-cartao placeholder:text-texto-3 focus:border-linha-forte h-10 w-full rounded-lg border pr-3 pl-9 text-[15px] outline-none"
+              className="border-linha bg-cartao placeholder:text-texto-3 h-10 w-full rounded-lg border pr-3 pl-9 text-[15px]"
             />
           </form>
         </div>
@@ -100,7 +105,10 @@ export default async function Biblioteca({ searchParams }: PageProps<"/bibliotec
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           {visao === "proprios" ? (
-            <AbasPeriodo atual={periodo} hrefPara={(p) => href({ periodo: p === "sempre" ? undefined : p, limite: undefined })} />
+            <AbasPeriodo
+              atual={periodo}
+              hrefPara={(p) => href({ periodo: p === "sempre" ? undefined : p, limite: undefined })}
+            />
           ) : (
             <span />
           )}
@@ -113,10 +121,16 @@ export default async function Biblioteca({ searchParams }: PageProps<"/bibliotec
                 scroll={false}
                 aria-current={o === ordem ? "true" : undefined}
                 className={`rounded-full border px-3 py-1.5 ${
-                  o === ordem ? "border-linha-forte bg-elevado text-texto" : "text-texto-2 hover:text-texto border-transparent"
+                  o === ordem
+                    ? "border-linha-forte bg-elevado text-texto"
+                    : "text-texto-2 hover:text-texto border-transparent"
                 }`}
               >
-                {o === "recentes" ? "Mais recentes" : criterioDeDesempenho() === "score" ? "Desempenho" : "Curtidas"}
+                {o === "recentes"
+                  ? "Mais recentes"
+                  : criterioDeDesempenho() === "score"
+                    ? "Desempenho"
+                    : "Curtidas"}
               </Link>
             ))}
           </div>
@@ -125,6 +139,7 @@ export default async function Biblioteca({ searchParams }: PageProps<"/bibliotec
 
       {visiveis.length ? (
         <>
+          <h2 className="sr-only">Reels</h2>
           <p className="text-texto-2 -mt-2 text-[14px]">
             {reels.length} {reels.length === 1 ? "Reel" : "Reels"}
             {visao === "proprios" && periodo !== "sempre" ? ` ${frasePeriodo(periodo)}` : ""}
@@ -154,14 +169,16 @@ export default async function Biblioteca({ searchParams }: PageProps<"/bibliotec
 
 function Vazio({ visao, busca }: { visao: Visao; busca: string }) {
   if (busca) {
-    return <p className="text-texto-2 text-[15px]">Nenhum Reel com “{busca}” na legenda. Tente outra palavra.</p>;
+    return (
+      <p className="text-texto-2 text-[15px]">Nenhum Reel com “{busca}” na legenda. Tente outra palavra.</p>
+    );
   }
   if (visao === "referencias") {
     return (
       <div className="bg-cartao border-linha flex max-w-xl flex-col items-start gap-4 rounded-2xl border p-6">
         <p className="text-[15px] leading-relaxed">
-          Nenhuma referência ainda. Envie o .mp4 de um Reel de outra conta que você quer estudar, e a análise da
-          edição aparece aqui.
+          Nenhuma referência ainda. Envie o .mp4 de um Reel de outra conta que você quer estudar, e a análise
+          da edição aparece aqui.
         </p>
         <Link
           href="/referencias/nova"
@@ -173,7 +190,9 @@ function Vazio({ visao, busca }: { visao: Visao; busca: string }) {
     );
   }
   if (visao === "atencao") {
-    return <p className="text-texto-2 text-[15px]">Nada pendente. Todos os Reels têm vídeo e análise em dia.</p>;
+    return (
+      <p className="text-texto-2 text-[15px]">Nada pendente. Todos os Reels têm vídeo e análise em dia.</p>
+    );
   }
   return <p className="text-texto-2 text-[15px]">Nenhum Reel neste período. Escolha outro período acima.</p>;
 }

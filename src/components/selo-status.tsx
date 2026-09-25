@@ -3,7 +3,7 @@ import type { StatusAnalise } from "@/lib/types";
 
 const TEXTO: Record<Exclude<StatusAnalise, "pronta">, string> = {
   pendente: "Aguardando análise",
-  analisando: "Analisando",
+  analisando: "Analisando…",
   erro: "A análise falhou",
   sem_video: "Sem vídeo: envie o .mp4",
 };

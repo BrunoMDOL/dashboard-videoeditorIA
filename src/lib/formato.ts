@@ -5,7 +5,7 @@ const dataCurta = new Intl.DateTimeFormat("pt-BR", {
   month: "short",
   timeZone: FUSO,
 });
-const dataHora = new Intl.DateTimeFormat("pt-BR", {
+const partesDataHora = new Intl.DateTimeFormat("pt-BR", {
   day: "numeric",
   month: "short",
   year: "numeric",
@@ -19,26 +19,19 @@ const compacto = new Intl.NumberFormat("pt-BR", {
   maximumFractionDigits: 1,
 });
 
+/** "22 set" */
 export function formatarData(iso: string): string {
-  return dataCurta.format(new Date(iso)).replace(".", "");
+  return dataCurta.format(new Date(iso)).replace(".", "").replace(" de ", " ");
 }
 
+/** "22 set 2026, 07:00" */
 export function formatarDataHora(iso: string): string {
-  return dataHora.format(new Date(iso)).replace(".", "");
+  const p = Object.fromEntries(partesDataHora.formatToParts(new Date(iso)).map((x) => [x.type, x.value]));
+  return `${p.day} ${p.month.replace(".", "")} ${p.year}, ${p.hour}:${p.minute}`;
 }
 
 export function formatarNumero(n: number): string {
   return n >= 10_000 ? compacto.format(n) : numero.format(n);
-}
-
-/** Tempo relativo curto: "há 3 h", "há 2 dias". */
-export function haQuanto(iso: string, agora: number = Date.now()): string {
-  const min = Math.round((agora - Date.parse(iso)) / 60_000);
-  if (min < 60) return `há ${Math.max(min, 1)} min`;
-  const h = Math.round(min / 60);
-  if (h < 24) return `há ${h} h`;
-  const d = Math.round(h / 24);
-  return d === 1 ? "ontem" : `há ${d} dias`;
 }
 
 /** Minutagem no estilo do Premiere, sem frames: 0:03,5 */
@@ -49,8 +42,13 @@ export function minutagem(segundos: number): string {
   return `${m}:${inteiro.padStart(2, "0")},${decimal}`;
 }
 
-export function duracao(segundos: number): string {
-  return segundos < 60 ? `${segundos} s` : `${Math.floor(segundos / 60)} min ${segundos % 60} s`;
+/** null quando a duração é desconhecida (Reel sem vídeo na API). */
+export function duracao(segundos: number): string | null {
+  if (segundos <= 0) return null;
+  // Espaço não separável entre número e unidade.
+  return segundos < 60
+    ? `${segundos}\u00A0s`
+    : `${Math.floor(segundos / 60)}\u00A0min ${segundos % 60}\u00A0s`;
 }
 
 /**
@@ -61,7 +59,12 @@ export function tituloDoReel(legenda: string): string {
   const linha =
     legenda
       .split("\n")
-      .map((l) => l.replace(/[#@][\p{L}\p{N}_.]+/gu, "").trim())
+      .map((l) =>
+        l
+          .replace(/[#@][\p{L}\p{N}_.]+/gu, "")
+          .replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u, "")
+          .trim(),
+      )
       .find((l) => l.length > 0) ?? "";
   if (!linha) return "Reel sem legenda";
   return linha.length > 90 ? `${linha.slice(0, 87).trimEnd()}…` : linha;

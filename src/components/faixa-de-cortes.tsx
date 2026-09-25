@@ -37,10 +37,7 @@ export function FaixaDeCortes({
   }
 
   const marcas = Array.from({ length: Math.floor(total) + 1 }, (_, s) => s);
-  const fimDoGancho = Math.min(
-    planos.filter((p) => p.inicio < GANCHO_S).at(-1)?.fim ?? GANCHO_S,
-    total,
-  );
+  const fimDoGancho = Math.min(planos.filter((p) => p.inicio < GANCHO_S).at(-1)?.fim ?? GANCHO_S, total);
 
   return (
     <figure className="m-0">
@@ -64,7 +61,7 @@ export function FaixaDeCortes({
                 title={`Plano ${i + 1}: ${minutagem(p.inicio)} a ${minutagem(p.fim)}`}
                 className={`flex h-full items-end rounded-[4px] px-1.5 pb-1 text-[12px] font-medium tabular-nums transition-colors ${
                   noGancho
-                    ? "bg-vermelho-botao text-white hover:bg-vermelho"
+                    ? "bg-vermelho-botao hover:bg-vermelho text-white"
                     : "bg-faixa text-texto hover:bg-linha-forte"
                 }`}
               >
@@ -87,9 +84,7 @@ export function FaixaDeCortes({
           >
             <span className={`w-px ${s % 5 === 0 ? "bg-texto-3 h-2" : "bg-linha-forte h-1"}`} />
             {s % 5 === 0 && s > 0 && s < total - 1 && (
-              <span className="text-texto-3 font-mono text-[11px]">
-                {minutagem(s).replace(",0", "")}
-              </span>
+              <span className="text-texto-3 font-mono text-[11px]">{minutagem(s).replace(",0", "")}</span>
             )}
           </span>
         ))}

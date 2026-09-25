@@ -62,7 +62,7 @@ export function textoParaCopiar(reel: Reel & { analise: Analise }): string {
   const linhas: string[] = [
     `Análise de edição: ${tituloDoReel(reel.legenda)}`,
     reel.permalink ? `Reel de referência: ${reel.permalink}` : "",
-    `Duração: ${duracao(reel.duracaoS)}`,
+    duracao(reel.duracaoS) ? `Duração: ${duracao(reel.duracaoS)}` : "",
     "",
     "Use esta análise para editar os clipes do projeto aberto no Adobe Premiere Pro, replicando o mesmo estilo de edição. Os nomes de efeitos e painéis estão em inglês, como no Premiere.",
     "",
@@ -70,12 +70,13 @@ export function textoParaCopiar(reel: Reel & { analise: Analise }): string {
     a.resumo,
     "",
     "LINHA DO TEMPO",
-    ...a.linhaDoTempo.map(
-      (p, i) => `${i + 1}. ${minutagem(p.inicio)} a ${minutagem(p.fim)}: ${p.descricao}`,
-    ),
+    ...a.linhaDoTempo.map((p, i) => `${i + 1}. ${minutagem(p.inicio)} a ${minutagem(p.fim)}: ${p.descricao}`),
   ];
   for (const s of SECOES) {
     linhas.push("", s.titulo.toUpperCase(), a[s.chave]);
   }
-  return linhas.filter((l, i, arr) => !(l === "" && arr[i - 1] === "")).join("\n").trim();
+  return linhas
+    .filter((l, i, arr) => !(l === "" && arr[i - 1] === ""))
+    .join("\n")
+    .trim();
 }

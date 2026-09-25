@@ -45,18 +45,16 @@ export function MenuLateral({ fonteDosDados }: { fonteDosDados: string }) {
                   href={href}
                   aria-current={atual ? "page" : undefined}
                   className={`relative flex items-center gap-3 rounded-lg px-3 py-2 text-[15px] whitespace-nowrap transition-colors ${
-                    atual
-                      ? "bg-cartao text-texto"
-                      : "text-texto-2 hover:bg-cartao/60 hover:text-texto"
+                    atual ? "bg-cartao text-texto" : "text-texto-2 hover:bg-cartao/60 hover:text-texto"
                   }`}
                 >
                   {atual && (
                     <span
                       aria-hidden
-                      className="bg-vermelho absolute bottom-0 left-3 right-3 h-0.5 rounded-full lg:top-2 lg:bottom-2 lg:left-0 lg:right-auto lg:h-auto lg:w-0.5"
+                      className="bg-vermelho absolute right-3 bottom-0 left-3 h-0.5 rounded-full lg:top-2 lg:right-auto lg:bottom-2 lg:left-0 lg:h-auto lg:w-0.5"
                     />
                   )}
-                  <Icone size={18} strokeWidth={1.75} aria-hidden />
+                  <Icone size={18} strokeWidth={1.75} aria-hidden className="hidden sm:block" />
                   {rotulo}
                 </Link>
               </li>

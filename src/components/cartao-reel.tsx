@@ -22,11 +22,7 @@ export function CartaoReel({ reel, posicao }: { reel: Reel; posicao?: number }) 
         )}
       </div>
 
-      {analise ? (
-        <FaixaDeCortes planos={analise.linhaDoTempo} />
-      ) : (
-        <SeloStatus status={reel.status} />
-      )}
+      {analise ? <FaixaDeCortes planos={analise.linhaDoTempo} /> : <SeloStatus status={reel.status} />}
 
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
@@ -40,15 +36,11 @@ export function CartaoReel({ reel, posicao }: { reel: Reel; posicao?: number }) 
           </h3>
           <p className="text-texto-2 mt-1 flex flex-wrap gap-x-3 text-[13px]">
             <span>{formatarData(reel.publicadoEm)}</span>
-            <span>{duracao(reel.duracaoS)}</span>
-            {reel.metricas && (
-              <span>{formatarNumero(reel.metricas.curtidas)} curtidas</span>
-            )}
+            {duracao(reel.duracaoS) && <span>{duracao(reel.duracaoS)}</span>}
+            {reel.metricas && <span>{formatarNumero(reel.metricas.curtidas)}&nbsp;curtidas</span>}
           </p>
         </div>
-        {analise && (
-          <BotaoCopiar variante="icone" texto={textoParaCopiar({ ...reel, analise })} />
-        )}
+        {analise && <BotaoCopiar variante="icone" texto={textoParaCopiar({ ...reel, analise })} />}
       </div>
     </article>
   );

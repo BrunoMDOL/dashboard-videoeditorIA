@@ -23,29 +23,39 @@ export default async function PaginaDoVideo({ params }: PageProps<"/videos/[id]"
 
   return (
     <div className="flex flex-col gap-6">
-      <Link href="/biblioteca" className="text-texto-2 hover:text-texto inline-flex w-fit items-center gap-1.5 text-[14px]">
+      <Link
+        href="/biblioteca"
+        className="text-texto-2 hover:text-texto inline-flex w-fit items-center gap-1.5 text-[14px]"
+      >
         <ArrowLeft size={15} aria-hidden />
         Biblioteca
       </Link>
 
       <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] xl:gap-12">
-        <aside className="flex flex-col gap-4 lg:sticky lg:top-9 lg:self-start">
-          <CapaDoReel reel={reel} prioridade tamanho="(min-width: 1024px) 280px, 70vw" className="mx-auto w-full max-w-[280px]" />
-          {reel.permalink && (
-            <a
-              href={reel.permalink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-texto-2 hover:text-texto inline-flex items-center justify-center gap-1 text-[14px]"
-            >
-              Abrir no Instagram
-              <ArrowUpRight size={14} aria-hidden />
-            </a>
-          )}
-          <details className="border-linha text-texto-2 rounded-xl border px-4 py-3 text-[14px]">
-            <summary className="text-texto cursor-pointer font-medium">Legenda do post</summary>
-            <p className="mt-3 leading-relaxed whitespace-pre-line">{reel.legenda || "Sem legenda."}</p>
-          </details>
+        <aside className="grid grid-cols-[8.5rem_minmax(0,1fr)] gap-4 lg:sticky lg:top-9 lg:grid-cols-1 lg:self-start">
+          <CapaDoReel
+            reel={reel}
+            prioridade
+            tamanho="(min-width: 1024px) 280px, 136px"
+            className="w-full lg:max-w-[280px]"
+          />
+          <div className="flex flex-col justify-end gap-3 lg:contents">
+            {reel.permalink && (
+              <a
+                href={reel.permalink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-texto-2 hover:text-texto inline-flex items-center gap-1 text-[14px] lg:justify-center"
+              >
+                Abrir no Instagram
+                <ArrowUpRight size={14} aria-hidden />
+              </a>
+            )}
+            <details className="border-linha text-texto-2 rounded-xl border px-4 py-3 text-[14px]">
+              <summary className="text-texto cursor-pointer font-medium">Legenda do post</summary>
+              <p className="mt-3 leading-relaxed whitespace-pre-line">{reel.legenda || "Sem legenda."}</p>
+            </details>
+          </div>
         </aside>
 
         <article className="flex min-w-0 flex-col gap-8">
@@ -59,10 +69,12 @@ export default async function PaginaDoVideo({ params }: PageProps<"/videos/[id]"
                 <dt className="text-texto-3 text-[13px]">Publicado</dt>
                 <dd className="text-texto">{formatarDataHora(reel.publicadoEm)}</dd>
               </div>
-              <div>
-                <dt className="text-texto-3 text-[13px]">Duração</dt>
-                <dd className="text-texto">{duracao(reel.duracaoS)}</dd>
-              </div>
+              {duracao(reel.duracaoS) && (
+                <div>
+                  <dt className="text-texto-3 text-[13px]">Duração</dt>
+                  <dd className="text-texto">{duracao(reel.duracaoS)}</dd>
+                </div>
+              )}
               {reel.metricas && (
                 <>
                   <div>
@@ -100,7 +112,10 @@ export default async function PaginaDoVideo({ params }: PageProps<"/videos/[id]"
                 <p className="max-w-[65ch] text-[19px] leading-relaxed">{analise.resumo}</p>
                 <ul className="flex flex-wrap gap-2" aria-label="Etiquetas da edição">
                   {rotulosDasEtiquetas(analise.etiquetas).map((e) => (
-                    <li key={e} className="border-linha-forte text-texto-2 rounded-full border px-3 py-1 text-[13px]">
+                    <li
+                      key={e}
+                      className="border-linha-forte text-texto-2 rounded-full border px-3 py-1 text-[13px]"
+                    >
                       {e}
                     </li>
                   ))}
@@ -119,7 +134,7 @@ export default async function PaginaDoVideo({ params }: PageProps<"/videos/[id]"
                     <li
                       key={i}
                       id={`plano-${i + 1}`}
-                      className="grid scroll-mt-6 grid-cols-[2.25rem_1fr] gap-x-3 gap-y-1 px-4 py-3 target:bg-elevado sm:grid-cols-[2.25rem_9.5rem_1fr]"
+                      className="target:bg-elevado grid scroll-mt-6 grid-cols-[2.25rem_1fr] gap-x-3 gap-y-1 px-4 py-3 sm:grid-cols-[2.25rem_9.5rem_1fr]"
                     >
                       <span
                         className={`text-[14px] font-semibold tabular-nums ${p.inicio < GANCHO_S ? "text-vermelho-texto" : "text-texto-3"}`}
@@ -129,7 +144,9 @@ export default async function PaginaDoVideo({ params }: PageProps<"/videos/[id]"
                       <span className="text-texto-2 font-mono text-[13px] leading-6">
                         {minutagem(p.inicio)} a {minutagem(p.fim)}
                       </span>
-                      <p className="col-start-2 text-[15px] leading-relaxed sm:col-start-3 sm:row-start-1">{p.descricao}</p>
+                      <p className="col-start-2 text-[15px] leading-relaxed sm:col-start-3 sm:row-start-1">
+                        {p.descricao}
+                      </p>
                     </li>
                   ))}
                 </ol>

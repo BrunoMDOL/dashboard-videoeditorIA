@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 
@@ -17,6 +17,11 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Reels | Besser Home",
   description: "Biblioteca de edição dos Reels da Besser Home, com análise de cada vídeo.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0d0f13",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
